@@ -1,28 +1,52 @@
 import Link from 'next/link'
+import { useState } from 'react'
+import { useRouter } from 'next/router'
+import axios from 'axios'
+import redirectIfAuthenticated from '../components/redirectIfAuthenticated'
 
 const Login = () => {
+    const router = useRouter();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+
+    const handleSubmit = () => {
+        if (!email || !password) {
+            return
+        }
+
+        axios.post('/api/users/login', {
+            email,
+            password
+        }).then(response => router.push('/dashboard'))
+          .catch(error => setError('Username or password are invalid'))
+    }
+
     return (
         <div className="bg-gray-400">
            
             <div className="container mx-auto">
                 <div className="flex justify-center px-6 my-12">
                     
-                    <div className="w-full xl:w-3/4 lg:w-11/12 flex">
+                    <div className="flex w-full xl:w-3/4 lg:w-11/12">
                         <div
-                            className="w-full h-auto bg-gray-400 hidden lg:block lg:w-1/2 bg-cover rounded-l-lg"
+                            className="hidden w-full h-auto bg-gray-400 bg-cover rounded-l-lg lg:block lg:w-1/2"
                         ></div>
-                        <div className="w-full lg:w-1/2 bg-white p-5 rounded-lg lg:rounded-l-none">
+                        <div className="w-full p-5 bg-white rounded-lg lg:w-1/2 lg:rounded-l-none">
                             <h3 className="pt-4 text-2xl text-center">Welcome Back!</h3>
                             <form className="px-8 pt-6 pb-8 mb-4 bg-white rounded">
                                 <div className="mb-4">
-                                    <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="username">
-                                        Username
+                                    <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
+                                        Email
                                     </label>
                                     <input
-                                        className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                                        id="username"
+                                        onFocus={e => setError('')}
+                                        value={email}
+                                        onChange={e => setEmail(e.target.value)}
+                                        className={`w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border ${error ? "border-red-500" : ""} rounded shadow appearance-none focus:outline-none focus:shadow-outline`}
+                                        id="email"
                                         type="text"
-                                        placeholder="Username"
+                                        placeholder="email"
                                     />
                                 </div>
                                 <div className="mb-4">
@@ -30,21 +54,19 @@ const Login = () => {
                                         Password
                                     </label>
                                     <input
-                                        className="w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border border-red-500 rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                                        onFocus={e => setError('')}
+                                        value={password}
+                                        onChange={e => setPassword(e.target.value)}
+                                        className={`w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border ${error ? "border-red-500" : ""} rounded shadow appearance-none focus:outline-none focus:shadow-outline`}
                                         id="password"
                                         type="password"
                                         placeholder="******************"
                                     />
-                                    <p className="text-xs italic text-red-500">Please choose a password.</p>
-                                </div>
-                                <div className="mb-4">
-                                    <input className="mr-2 leading-tight" type="checkbox" id="checkbox_id" />
-                                    <label className="text-sm" htmlFor="checkbox_id">
-                                        Remember Me
-                                    </label>
+                                     { error.name &&  <p className="text-xs italic text-red-500">{ error }</p>}
                                 </div>
                                 <div className="mb-6 text-center">
                                     <button
+                                        onClick={handleSubmit}
                                         className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline"
                                         type="button"
                                     >
@@ -79,4 +101,4 @@ const Login = () => {
     );
 }
 
-export default Login
+export default redirectIfAuthenticated(Login)

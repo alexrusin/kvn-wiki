@@ -26,7 +26,10 @@ const Register = () => {
             email,
             password
         })
-        .then(response => router.push('/dashboard'))
+        .then(response => {
+            /// TO DO: dispatch action to set authenticated user
+            router.push('/dashboard')
+        })
         .catch(error => {
             if (error.response.data.errors)  {
                 setErrors(error.response.data.errors)

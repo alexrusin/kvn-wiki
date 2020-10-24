@@ -6,20 +6,21 @@ import Cookies from 'cookies'
 
 const handler = nextConnect();
 
-handler.post((req, res) => {
-    dbConnect()
-    const user = await User.findByCredentials(req.body.email, req.body.password)
-    const token = await user.generateAuthToken()
+handler.post(async (req, res) => {
+    try {
+        dbConnect()
+        const user = await User.findByCredentials(req.body.email, req.body.password)
+        const token = await user.generateAuthToken()
 
-    user.tokens = user.tokens.concat({ token })
-    await user.save()
+        user.tokens = user.tokens.concat({ token })
+        await user.save()
 
-    const cookies = new Cookies(req, res)
-    cookies.set('ikdb', encrypt(token), {
-        httpOnly: true,
-    })
+        const cookies = new Cookies(req, res)
+        cookies.set('ikdb', encrypt(token), {
+            httpOnly: true,
+        })
 
-    res.status(200).json({ user, token });
+        res.status(200).json({ user, token });
 
     } catch (e) {
 
