@@ -1,11 +1,15 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import { useDispatch } from 'react-redux'
+import redirectIfAuthenticated from '../components/redirectIfAuthenticated'
+import { setLoggedInUser } from '../store/actions'
+
 import axios from 'axios'
 
 const Register = () => {
-
     const router = useRouter()
+    const dispatch = useDispatch()
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -27,7 +31,7 @@ const Register = () => {
             password
         })
         .then(response => {
-            /// TO DO: dispatch action to set authenticated user
+            dispatch(setLoggedInUser(response.data.user))
             router.push('/dashboard')
         })
         .catch(error => {
@@ -164,4 +168,4 @@ const Register = () => {
     );
 }
 
-export default Register
+export default redirectIfAuthenticated(Register)

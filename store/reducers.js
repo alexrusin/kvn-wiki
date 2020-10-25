@@ -10,6 +10,8 @@ const userReducer = (state = {}, { type, payload }) => {
         } else {
             return state
         }
+    case types.SET_LOGGED_IN_USER:
+      return payload
     default:
       return state
   }

@@ -1,11 +1,15 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import { useDispatch } from 'react-redux'
 import axios from 'axios'
 import redirectIfAuthenticated from '../components/redirectIfAuthenticated'
+import { setLoggedInUser } from '../store/actions'
 
 const Login = () => {
     const router = useRouter();
+    const dispatch = useDispatch()
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -18,7 +22,10 @@ const Login = () => {
         axios.post('/api/users/login', {
             email,
             password
-        }).then(response => router.push('/dashboard'))
+        }).then(response => {
+            dispatch(setLoggedInUser(response.data.user))
+            router.push('/dashboard')
+        })
           .catch(error => setError('Username or password are invalid'))
     }
 
