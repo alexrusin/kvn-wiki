@@ -1,6 +1,21 @@
 import Link from "next/link"
+import { useSelector, useDispatch } from 'react-redux'
+import { useRouter } from 'next/router'
+import axios from 'axios'
+import { setLoggedOutUser } from '../store/actions'
 
 export default function Nav() {
+  const membership = useSelector(({user}) => user.membership)
+  const dispatch = useDispatch()
+  const router = useRouter()
+
+  const handleLogout = () => {
+    axios.post('/api/users/logout').then(response => {
+        dispatch(setLoggedOutUser())
+        router.push('/login')
+    }).catch(error => console.log('There was an error logging out user'))
+  }
+
   return (
     <nav className="flex justify-center bg-gray-800">
       <div className="container flex flex-wrap items-center p-3">
@@ -48,6 +63,8 @@ export default function Nav() {
               <span>Dashboard</span>
             </a>
           </Link>
+          { 
+          membership === 'guest' ? 
           <Link href="/login">
             <a
               className="items-center justify-center w-full px-3 py-2 text-gray-400 rounded lg:inline-flex lg:w-auto hover:bg-gray-900 hover:text-white"
@@ -55,6 +72,12 @@ export default function Nav() {
               <span>Login</span>
             </a>
           </Link>
+          : <button type="button"
+            onClick={handleLogout}
+            className="items-center justify-center w-full px-3 py-2 text-gray-400 rounded lg:inline-flex lg:w-auto hover:bg-gray-900 hover:text-white">
+            Log out
+          </button>
+          }
           </div>
         </div>
       </div>

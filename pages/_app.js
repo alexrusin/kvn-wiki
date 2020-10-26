@@ -4,7 +4,7 @@ import '../css/form.css'
 import Head from 'next/head'
 import Link from 'next/link'
 
-import { Provider, useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { wrapper } from '../store/store'
 import { setAuthenticatedUser } from '../store/actions'
