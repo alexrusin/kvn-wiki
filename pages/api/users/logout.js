@@ -1,22 +1,33 @@
-import nextConnect from 'next-connect'
-import auth from '../../../middleware/auth'
+import getAuthUser from '../../../middleware/getAuthUser'
 import setCookie from '../../../utils/setCookie'
 
-const handler = nextConnect();
+export default async function handler(req, res) {
+  const { method } = req
+  
+  try {
+        await getAuthUser(req, res)
+  } catch (err) {
+        return res.status(401).send({
+            error: 'Please authenticate'
+        })
+  }
 
-handler.use(auth)
-    .post(async (req, res) => {
-        try {
+  switch (method) {
+    case 'POST':
+       try {
             req.user.tokens = req.user.tokens.filter((token) => {
                 return token.token !== req.token
             })
             await req.user.save()
 
             setCookie(req, res, 'ikdb', 'expired', -1);            
-            res.send()
+            return res.json({message: 'logged out'})
         } catch (e) {
-            res.status(500).send()
+            return res.status(500).send()
         }
-    })
-
-export default handler
+      break
+    default:
+      res.status(400).json({ message: 'Route not found'})
+      break
+  }
+}
