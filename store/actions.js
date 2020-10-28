@@ -19,5 +19,3 @@ export const setAuthenticatedUser = () => (dispatch) => {
 
 export const setLoggedInUser = (payload) => ({type: types.SET_LOGGED_IN_USER, payload})
 
-export const setLoggedOutUser = () => ({type: types.SET_LOGGED_OUT_USER, payload: {membership: "guest"}})
-

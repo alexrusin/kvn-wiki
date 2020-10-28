@@ -23,7 +23,7 @@ const Login = () => {
             email,
             password
         }).then(response => {
-            dispatch(setLoggedInUser(response.data.user))
+            dispatch(setLoggedInUser(response.data))
             router.push('/dashboard')
         })
           .catch(error => setError('Username or password are invalid'))

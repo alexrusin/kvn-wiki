@@ -2,7 +2,7 @@ import Link from "next/link"
 import { useSelector, useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import axios from 'axios'
-import { setLoggedOutUser } from '../store/actions'
+import { setLoggedInUser } from '../store/actions'
 
 export default function Nav() {
   const membership = useSelector(({user}) => user.membership)
@@ -11,7 +11,7 @@ export default function Nav() {
 
   const handleLogout = () => {
     axios.post('/api/users/logout').then(response => {
-        dispatch(setLoggedOutUser())
+        dispatch(setLoggedInUser({membership: 'guest'}))
         router.push('/login')
     }).catch(error => console.log('There was an error logging out user'))
   }
