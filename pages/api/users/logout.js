@@ -16,19 +16,22 @@ export default async function handler (req, res) {
   switch (method) {
     case 'POST':
       try {
-        req.user.tokens = req.user.tokens.filter((token) => {
-          return token.token !== req.token
-        })
-        await req.user.save()
+        if (req.token) {
+          req.user.tokens = req.user.tokens.filter((token) => {
+            return token.token !== req.token
+          })
+          await req.user.save()
+        } else {
+          setCookie(req, res, 'ikdb', 'expired', -1)
+        }
 
-        setCookie(req, res, 'ikdb', 'expired', -1)
         return res.json({ message: 'logged out' })
       } catch (e) {
         return res.status(500).send()
       }
       break
     default:
-      res.status(400).json({ message: 'Route not found' })
+      res.status(404).json({ error: 'Route not found' })
       break
   }
 }

@@ -1,11 +1,22 @@
-import nextConnect from 'next-connect'
-import auth from '../../../middleware/auth'
+import getAuthUser from '../../../middleware/getAuthUser'
 
-const handler = nextConnect();
+export default async function handler (req, res) {
+  const { method } = req
 
-handler.use(auth)
-    .get((req, res) => {
-        res.send(req.user)
+  try {
+    await getAuthUser(req, res)
+  } catch (err) {
+    return res.status(401).send({
+      error: 'Please authenticate'
     })
+  }
 
-export default handler
+  switch (method) {
+    case 'GET':
+      res.send({ user: req.user })
+      break
+    default:
+      res.status(404).json({ error: 'Route not found' })
+      break
+  }
+}

@@ -7,34 +7,40 @@ import redirectIfAuthenticated from '../components/redirectIfAuthenticated'
 import { setLoggedInUser } from '../store/actions'
 
 const Login = () => {
-    const router = useRouter();
-    const dispatch = useDispatch()
+  const router = useRouter()
+  const dispatch = useDispatch()
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
 
-    const handleSubmit = () => {
-        if (!email || !password) {
-            return
-        }
-
-        axios.post('/api/users/login', {
-            email,
-            password
-        }).then(response => {
-            dispatch(setLoggedInUser(response.data))
-            router.push('/dashboard')
-        })
-          .catch(error => setError('Username or password are invalid'))
+  const handleSubmit = () => {
+    if (!email || !password) {
+      return
     }
 
-    return (
+    axios.post('/api/users/login', {
+      email,
+      password
+    }).then(response => {
+      dispatch(setLoggedInUser(response.data.user))
+      router.push('/dashboard')
+    })
+      .catch(error => {
+        if (error.response) {
+          setError('Username or password are invalid')
+        } else {
+          setError('There was an error processing your request')
+        }
+      })
+  }
+
+  return (
         <div className="bg-gray-400">
-           
+
             <div className="container mx-auto">
                 <div className="flex justify-center px-6 my-12">
-                    
+
                     <div className="flex w-full xl:w-3/4 lg:w-11/12">
                         <div
                             className="hidden w-full h-auto bg-gray-400 bg-cover rounded-l-lg lg:block lg:w-1/2"
@@ -50,7 +56,7 @@ const Login = () => {
                                         onFocus={e => setError('')}
                                         value={email}
                                         onChange={e => setEmail(e.target.value)}
-                                        className={`w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border ${error ? "border-red-500" : ""} rounded shadow appearance-none focus:outline-none focus:shadow-outline`}
+                                        className={`w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border ${error ? 'border-red-500' : ''} rounded shadow appearance-none focus:outline-none focus:shadow-outline`}
                                         id="email"
                                         type="text"
                                         placeholder="email"
@@ -64,12 +70,12 @@ const Login = () => {
                                         onFocus={e => setError('')}
                                         value={password}
                                         onChange={e => setPassword(e.target.value)}
-                                        className={`w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border ${error ? "border-red-500" : ""} rounded shadow appearance-none focus:outline-none focus:shadow-outline`}
+                                        className={`w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 border ${error ? 'border-red-500' : ''} rounded shadow appearance-none focus:outline-none focus:shadow-outline`}
                                         id="password"
                                         type="password"
                                         placeholder="******************"
                                     />
-                                     { error.name &&  <p className="text-xs italic text-red-500">{ error }</p>}
+                                     { error.name && <p className="text-xs italic text-red-500">{ error }</p>}
                                 </div>
                                 <div className="mb-6 text-center">
                                     <button
@@ -105,7 +111,7 @@ const Login = () => {
                 </div>
             </div>
         </div>
-    );
+  )
 }
 
 export default redirectIfAuthenticated(Login)

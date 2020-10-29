@@ -6,17 +6,28 @@ import jwt from 'jsonwebtoken'
 
 const getAuthUser = async (req, res) => {
   await dbConnect()
-  const cookies = new Cookies(req, res)
-  const toDecrypt = cookies.get('ikdb')
-  if (!toDecrypt) {
-    throw new Error()
+
+  let user
+  let token
+
+  if (req.headers.authorization) {
+    token = req.headers.authorization.replace('Bearer ', '')
+    const decoded = jwt.verify(token, process.env.APP_KEY)
+    user = await User.findOne({
+      _id: decoded._id,
+      'tokens.token': token
+    })
+  } else {
+    const cookies = new Cookies(req, res)
+    const toDecrypt = cookies.get('ikdb')
+    if (!toDecrypt) {
+      throw new Error()
+    }
+    const id = decrypt(toDecrypt)
+    user = await User.findOne({
+      _id: id
+    })
   }
-  const token = decrypt(toDecrypt)
-  const decoded = jwt.verify(token, process.env.APP_KEY)
-  const user = await User.findOne({
-    _id: decoded._id,
-    'tokens.token': token
-  })
 
   if (!user) {
     throw new Error()
