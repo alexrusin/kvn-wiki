@@ -13,7 +13,7 @@ export default async function handler (req, res) {
 
   switch (method) {
     case 'GET':
-      res.send({ user: req.user })
+      res.json({ user: req.user })
       break
     default:
       res.status(404).json({ error: 'Route not found' })

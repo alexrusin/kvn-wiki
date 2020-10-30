@@ -28,7 +28,7 @@ const Login = () => {
     })
       .catch(error => {
         if (error.response) {
-          setError('Username or password are invalid')
+          setError('Username and/or password are invalid')
         } else {
           setError('There was an error processing your request')
         }
@@ -75,7 +75,7 @@ const Login = () => {
                                         type="password"
                                         placeholder="******************"
                                     />
-                                     { error.name && <p className="text-xs italic text-red-500">{ error }</p>}
+                                     { error && <p className="text-xs italic text-red-500">{ error }</p>}
                                 </div>
                                 <div className="mb-6 text-center">
                                     <button

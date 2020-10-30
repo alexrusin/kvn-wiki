@@ -1,7 +1,7 @@
 import dbConnect from '../../../utils/dbConnect'
-import encrypt from '../../../utils/encrypt'
 import User from '../../../models/User'
-import Cookies from 'cookies'
+import signInWithToken from '../../../utils/signInWithToken'
+import signInWithCookie from '../../../utils/signInWithCookie'
 
 export default async function handler (req, res) {
   const { method } = req
@@ -13,19 +13,14 @@ export default async function handler (req, res) {
         const user = new User(req.body)
         await user.save()
 
-        const token = await user.generateAuthToken()
-        user.tokens = user.tokens.concat({ token })
-        await user.save()
-
-        const cookies = new Cookies(req, res)
-        cookies.set('ikdb', encrypt(token), {
-          httpOnly: true
-        })
-
-        res.status(201).json({ user, token })
+        if (req.headers.accept === 'application/json') {
+          res.status(201).json(await signInWithToken(user))
+        } else {
+          res.status(201).json(signInWithCookie(req, res, user))
+        }
       } catch (e) {
         console.log(e)
-        res.status(400).send(e)
+        res.status(500).send(e)
       }
       break
     default:
