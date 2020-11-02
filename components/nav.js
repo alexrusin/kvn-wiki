@@ -1,23 +1,26 @@
-import Link from "next/link"
+import { useState } from 'react'
+import Link from 'next/link'
 import { useSelector, useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import { setLoggedInUser } from '../store/actions'
 
-export default function Nav() {
-  const membership = useSelector(({user}) => user.membership)
+export default function Nav () {
+  const membership = useSelector(({ user }) => user.membership)
   const dispatch = useDispatch()
   const router = useRouter()
 
+  const [menuOpen, setMenuOpen] = useState(false)
+
   const handleLogout = () => {
     axios.post('/api/users/logout').then(response => {
-        dispatch(setLoggedInUser({membership: 'guest'}))
-        router.push('/login')
+      dispatch(setLoggedInUser({ membership: 'guest' }))
+      router.push('/login')
     }).catch(error => console.log('There was an error logging out user'))
   }
 
   return (
-    <nav className="flex justify-center bg-gray-800">
+    <nav className="flex justify-center bg-gray-900">
       <div className="container flex flex-wrap items-center p-3">
         <a href="/" className="inline-flex items-center p-2 mr-4">
           <svg
@@ -32,13 +35,14 @@ export default function Nav() {
           </span>
         </a>
         <button
+          onClick={() => setMenuOpen(!menuOpen)}
           className="inline-flex p-3 ml-auto text-white rounded outline-none hover:bg-gray-900 lg:hidden hover:text-white nav-toggler"
           data-target="#navigation"
         >
           <i className="material-icons">menu</i>
         </button>
         <div
-          className="hidden w-full top-navbar lg:inline-flex lg:flex-grow lg:w-auto"
+          className={`${menuOpen ? '' : 'hidden'} w-full top-navbar lg:inline-flex lg:flex-grow lg:w-auto`}
           id="navigation"
         >
           <div className="flex flex-col items-start w-full lg:inline-flex lg:flex-row lg:ml-auto lg:w-auto lg:items-center lg:h-auto">
@@ -47,6 +51,13 @@ export default function Nav() {
               className="items-center justify-center w-full px-3 py-2 text-gray-400 rounded lg:inline-flex lg:w-auto hover:bg-gray-900 hover:text-white"
             >
               <span>Home</span>
+            </a>
+          </Link>
+          <Link href="/pets">
+            <a
+              className="items-center justify-center w-full px-3 py-2 text-gray-400 rounded lg:inline-flex lg:w-auto hover:bg-gray-900 hover:text-white"
+            >
+              <span>Pets</span>
             </a>
           </Link>
           <Link href="/new">
@@ -63,16 +74,16 @@ export default function Nav() {
               <span>Dashboard</span>
             </a>
           </Link>
-          { 
-          membership === 'guest' ? 
-          <Link href="/login">
+          {
+          membership === 'guest'
+            ? <Link href="/login">
             <a
               className="items-center justify-center w-full px-3 py-2 text-gray-400 rounded lg:inline-flex lg:w-auto hover:bg-gray-900 hover:text-white"
             >
               <span>Login</span>
             </a>
           </Link>
-          : <button type="button"
+            : <button type="button"
             onClick={handleLogout}
             className="items-center justify-center w-full px-3 py-2 text-gray-400 rounded lg:inline-flex lg:w-auto hover:bg-gray-900 hover:text-white">
             Log out
@@ -82,5 +93,5 @@ export default function Nav() {
         </div>
       </div>
     </nav>
-  );
+  )
 }

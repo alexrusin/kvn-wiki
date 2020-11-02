@@ -10,14 +10,13 @@ import { wrapper } from '../store/store'
 import { setAuthenticatedUser } from '../store/actions'
 import Nav from '../components/nav'
 
-
-function MyApp({ Component, pageProps }) {
-  const membership = useSelector(({user}) => user.membership)
+function MyApp ({ Component, pageProps }) {
+  const membership = useSelector(({ user }) => user.membership)
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (!membership) dispatch(setAuthenticatedUser());
-   }, []);
+    if (!membership) dispatch(setAuthenticatedUser())
+  }, [])
 
   return (
      <>
@@ -31,4 +30,4 @@ function MyApp({ Component, pageProps }) {
   )
 }
 
-export default wrapper.withRedux(MyApp);
+export default wrapper.withRedux(MyApp)
