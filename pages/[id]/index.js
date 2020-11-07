@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import { NextSeo } from 'next-seo'
 import Link from 'next/link'
 import dbConnect from '../../utils/dbConnect'
 import Pet from '../../models/Pet'
 
-/* Allows you to view pet card info and delete pet card*/
 const PetPage = ({ pet }) => {
   const router = useRouter()
   const [message, setMessage] = useState('')
@@ -13,7 +13,7 @@ const PetPage = ({ pet }) => {
 
     try {
       await fetch(`/api/pets/${petID}`, {
-        method: 'Delete',
+        method: 'Delete'
       })
       router.push('/')
     } catch (error) {
@@ -22,6 +22,11 @@ const PetPage = ({ pet }) => {
   }
 
   return (
+    <>
+    <NextSeo
+      title={`${pet.name} | ${pet.owner_name}`}
+      description={`This pet likes ${pet.likes[0]} and dislikes ${pet.dislikes[0]}`}
+    />
     <div key={pet._id}>
       <div className="card">
         <img src={pet.image_url} />
@@ -60,10 +65,11 @@ const PetPage = ({ pet }) => {
       </div>
       {message && <p>{message}</p>}
     </div>
+    </>
   )
 }
 
-export async function getServerSideProps({ params }) {
+export async function getServerSideProps ({ params }) {
   await dbConnect()
 
   const pet = await Pet.findById(params.id).lean()

@@ -1,3 +1,4 @@
+/* eslint-disable node/handle-callback-err */
 import { useState } from 'react'
 import Link from 'next/link'
 import { useSelector, useDispatch } from 'react-redux'

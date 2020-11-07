@@ -1,8 +1,7 @@
 import '../css/index.css'
 import '../css/style.css'
 import '../css/form.css'
-import Head from 'next/head'
-import Link from 'next/link'
+import { DefaultSeo } from 'next-seo'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
@@ -20,9 +19,9 @@ function MyApp ({ Component, pageProps }) {
 
   return (
      <>
-      <Head>
-        <title>Pet Care App</title>
-      </Head>
+      <DefaultSeo
+        title="KVN IMDB"
+      />
 
       <Nav/>
       <Component {...pageProps} />
